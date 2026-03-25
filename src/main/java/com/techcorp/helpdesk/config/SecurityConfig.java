@@ -1,7 +1,6 @@
 package com.techcorp.helpdesk.config;
 
 import com.techcorp.helpdesk.service.UtilisateurService;
-import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,30 +9,28 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
-@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final UtilisateurService utilisateurService;
+    private final PasswordEncoder passwordEncoder;
 
-    // --- Encodeur de mot de passe BCrypt ---
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+    public SecurityConfig(UtilisateurService utilisateurService,
+                          PasswordEncoder passwordEncoder) {
+        this.utilisateurService = utilisateurService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     // --- Fournisseur d'authentification ---
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setUserDetailsService(utilisateurService);
-        provider.setPasswordEncoder(passwordEncoder());
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(utilisateurService);
+        provider.setPasswordEncoder(passwordEncoder);
         return provider;
     }
 
@@ -49,15 +46,10 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        // Pages publiques
                         .requestMatchers("/login", "/css/**", "/js/**", "/images/**").permitAll()
-                        // Création d'utilisateur réservée à l'admin
                         .requestMatchers("/utilisateurs/**").hasRole("ADMIN")
-                        // Suppression réservée à l'admin
                         .requestMatchers("/tickets/*/supprimer").hasRole("ADMIN")
-                        // Assignation réservée aux techniciens et admins
                         .requestMatchers("/tickets/*/assigner").hasAnyRole("TECHNICIEN", "ADMIN")
-                        // Tout le reste nécessite d'être connecté
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

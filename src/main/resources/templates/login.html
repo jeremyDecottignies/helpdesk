@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Connexion — Helpdesk TechCorp</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: Arial, sans-serif; background: #f5f5f5; display: flex; align-items: center; justify-content: center; min-height: 100vh; }
+        .login-card { background: white; border-radius: 10px; padding: 40px; width: 100%; max-width: 400px; box-shadow: 0 2px 8px rgba(0,0,0,0.12); }
+        h1 { font-size: 22px; color: #2c3e50; margin-bottom: 8px; }
+        p.subtitle { font-size: 14px; color: #888; margin-bottom: 24px; }
+        .form-group { margin-bottom: 16px; }
+        label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: bold; color: #555; }
+        input { width: 100%; padding: 10px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
+        input:focus { outline: none; border-color: #2c3e50; }
+        .btn { width: 100%; padding: 12px; background: #2c3e50; color: white; border: none; border-radius: 6px; font-size: 15px; cursor: pointer; margin-top: 8px; }
+        .btn:hover { background: #34495e; }
+        .alert { padding: 10px 14px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+        .alert-danger { background: #f8d7da; color: #721c24; }
+        .alert-info   { background: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+<div class="login-card">
+    <h1>Helpdesk TechCorp</h1>
+    <p class="subtitle">Connectez-vous pour accéder à vos tickets.</p>
+
+    <div th:if="${erreur}" class="alert alert-danger" th:text="${erreur}"></div>
+    <div th:if="${info}"   class="alert alert-info"   th:text="${info}"></div>
+
+    <form th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">Email</label>
+            <input type="email" id="username" name="username" placeholder="votre@email.com" required/>
+        </div>
+        <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input type="password" id="password" name="password" placeholder="••••••••" required/>
+        </div>
+        <button type="submit" class="btn">Se connecter</button>
+    </form>
+</div>
+</body>
+</html>
