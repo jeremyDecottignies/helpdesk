@@ -260,5 +260,3 @@ docs: ajout documentation
 ```
 
 ---
-
-*Projet réalisé dans le cadre du BTS SIO — Épreuve E6 — Situation professionnelle n°2*
